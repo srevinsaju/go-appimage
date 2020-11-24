@@ -35,7 +35,6 @@ jobs:
         
     - name: Download a prebuilt appimagetool 
       if: ${{ matrix.app }} != appimagetool
-      needs: build-appimagetool
       uses: actions/download-artifact@v1
       with:
         name: appimagetool.AppImage
