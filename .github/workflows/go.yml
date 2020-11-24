@@ -32,13 +32,6 @@ jobs:
             dep ensure
         fi
 
-        
-    - name: Download a prebuilt appimagetool 
-      if: ${{ matrix.app }} != appimagetool
-      uses: actions/download-artifact@v1
-      with:
-        name: appimagetool.AppImage
-
     - name: Build
       run: |
         go build -v -trimpath -ldflags="-s -w" ./src/${{ matrix.app }}
@@ -157,8 +150,8 @@ jobs:
         if [[ "${{ matrix.app }}" == "appimagetool" ]]; then
           PATH=./${{ matrix.app }}.AppDir/usr/bin/:$PATH appimagetool ./${{ matrix.app}}.AppDir
         else;
-          chmod +x ./appimage.AppImage
-          ./appimage.AppImage ./${{ matrix.app}}.AppDir
+          chmod +x ./appimage-deploy.AppImage
+          ./appimage-deploy.AppImage ./${{ matrix.app}}.AppDir
         fi
         rm -rf ./appimage.AppImage
         mkdir dist
