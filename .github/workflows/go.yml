@@ -10,7 +10,6 @@ jobs:
 
   build:
     name: Build ${{ matrix.app }}
-    id: build-${{ matrix.app }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -43,7 +42,6 @@ jobs:
 
     - name: Build
       run: |
-        
         go build -v -trimpath -ldflags="-s -w" ./src/${{ matrix.app }}
         mv ./${{ matrix.app }} ./$${{ matrix.app}}-$(go env GOHOSTARCH)
         # export the ARCHITECTURE
@@ -86,6 +84,7 @@ jobs:
         mv *.AppImage dist
 
     - name: Upload Artifact
+      id: build-${{ matrix.app }}
       uses: actions/upload-artifact@v1.0.0
       with:
         name: ${{ matrix.app }}-continuous.AppImage
