@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app: [appimagetool, appimaged, mkappimage]
+        app: [appimagetool, appimaged]
     steps:
 
     - name: Set up Go 1.x
