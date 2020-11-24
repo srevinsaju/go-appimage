@@ -83,7 +83,6 @@ jobs:
         mv *.AppImage dist
 
     - name: Upload Artifact
-      id: build-${{ matrix.app }}
       uses: actions/upload-artifact@v1.0.0
       with:
         name: ${{ matrix.app }}-deploy.AppImage
