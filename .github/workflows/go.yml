@@ -1,4 +1,4 @@
-name: Build
+leaname: Build
 
 on:
   push:
@@ -33,6 +33,7 @@ jobs:
         fi
 
     - name: Build
+      shell: bash
       run: |
         go build -v -trimpath -ldflags="-s -w" ./src/${{ matrix.app }}
         mv ./${{ matrix.app }} ./${{ matrix.app }}-$(go env GOHOSTARCH)
@@ -115,6 +116,7 @@ jobs:
         name: appimagetool-deploy.AppImage
 
     - name: Build
+      shell: bash
       run: |
         go build -v -trimpath -ldflags="-s -w" ./src/${{ matrix.app }}
         mv ./${{ matrix.app }} ./${{ matrix.app }}-$(go env GOHOSTARCH)
