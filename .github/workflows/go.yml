@@ -53,7 +53,7 @@ jobs:
             ( cd ${{ matrix.app }}.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-$ARCHITECTURE -O unsquashfs )
         fi
         chmod +x ${{ matrix.app }}.AppDir/usr/bin/*
-        cp ${{ matrix.app }}-$(go env GOHOSTARCH) ${{ matrix.app }}.AppDir/usr/bin/
+        cp ${{ matrix.app }}-$(go env GOHOSTARCH) ${{ matrix.app }}.AppDir/usr/bin/${{ matrix.app }}
         ( cd ${{ matrix.app }}.AppDir/ ; ln -s usr/bin/${{ matrix.app }} AppRun)
         cp data/appimage.png ${{ matrix.app }}.AppDir/
         cat > appimagetool.AppDir/appimagetool.desktop <<\EOF
@@ -136,7 +136,7 @@ jobs:
             ( cd ${{ matrix.app }}.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-$ARCHITECTURE -O unsquashfs )
         fi
         chmod +x ${{ matrix.app }}.AppDir/usr/bin/*
-        cp ${{ matrix.app }}-$(go env GOHOSTARCH) ${{ matrix.app }}.AppDir/usr/bin/
+        cp ${{ matrix.app }}-$(go env GOHOSTARCH) ${{ matrix.app }}.AppDir/usr/bin/${{ matrix.app }}
         ( cd ${{ matrix.app }}.AppDir/ ; ln -s usr/bin/${{ matrix.app }} AppRun)
         cp data/appimage.png ${{ matrix.app }}.AppDir/
         cat > appimagetool.AppDir/appimagetool.desktop <<\EOF
