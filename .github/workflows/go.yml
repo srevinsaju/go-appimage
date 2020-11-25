@@ -56,7 +56,7 @@ jobs:
         cp ${{ matrix.app }}-$(go env GOHOSTARCH) ${{ matrix.app }}.AppDir/usr/bin/${{ matrix.app }}
         ( cd ${{ matrix.app }}.AppDir/ ; ln -s usr/bin/${{ matrix.app }} AppRun)
         cp data/appimage.png ${{ matrix.app }}.AppDir/
-        cat > appimagetool.AppDir/appimagetool.desktop <<\EOF
+        cat > ${{ matrix.app }}.AppDir/${{ matrix.app }}.desktop <<\EOF
         [Desktop Entry]
         Type=Application
         Name=${{ matrix.app }}
@@ -140,7 +140,7 @@ jobs:
         cp ${{ matrix.app }}-$(go env GOHOSTARCH) ${{ matrix.app }}.AppDir/usr/bin/${{ matrix.app }}
         ( cd ${{ matrix.app }}.AppDir/ ; ln -s usr/bin/${{ matrix.app }} AppRun)
         cp data/appimage.png ${{ matrix.app }}.AppDir/
-        cat > appimagetool.AppDir/appimagetool.desktop <<\EOF
+        cat > ${{ matrix.app }}.AppDir/${{ matrix.app }}.desktop <<\EOF
         [Desktop Entry]
         Type=Application
         Name=${{ matrix.app }}
