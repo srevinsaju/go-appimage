@@ -9,7 +9,7 @@ on:
 jobs:
 
   build-appimagetool:
-    name: Build ${{ matrix.app }}
+    name: Pre-deploy tests ${{ matrix.app }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -154,8 +154,9 @@ jobs:
           ln -s ${{ matrix.app }}.AppDir/usr/bin/* .
           PATH="${{ matrix.app }}.AppDir/usr/bin/:$PATH" ./appimagetool-* ./${{ matrix.app}}.AppDir || true  # FIXME: remove this true
         else
-          chmod +x ./appimage-deploy.AppImage
-          ./appimage-deploy.AppImage ./${{ matrix.app}}.AppDir || true
+          # use our own dog food :)
+          chmod +x ./appimagetool-deploy.AppImage/*.AppImage
+          ./appimagetool-deploy.AppImage/*.AppImage ./${{ matrix.app}}.AppDir || true
         fi
         rm -rf ./appimage.AppImage
         mkdir dist
@@ -166,5 +167,16 @@ jobs:
       with:
         name: ${{ matrix.app }}-continuous.AppImage
         path: dist
-        
-    
+
+    - name: Pre Release
+      uses: marvinpinto/action-automatic-releases@latest
+      if: github.ref == 'refs/heads/master' && startsWith(github.ref, 'refs/tags/') != true
+      with:
+        prerelease: true
+        draft: false
+        automatic_release_tag: ${{ matrix.app }}-continuous
+        title: ${{ matrix.app }} Continuous Build
+        files: |
+          ${{ matrix.app }}-continuous.AppImage
+  
+
