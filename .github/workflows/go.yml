@@ -67,7 +67,7 @@ jobs:
         Terminal=true
         EOF
         if [[ "${{ matrix.app }}" == "appimagetool" ]]; then
-          PATH=./${{ matrix.app }}.AppDir/usr/bin/:$PATH ./appimagetool ./${{ matrix.app}}.AppDir
+          PATH=./${{ matrix.app }}.AppDir/usr/bin/:$PATH ./appimagetool-* ./${{ matrix.app}}.AppDir
         else
           chmod +x ./appimage.AppImage
           ./appimage.AppImage ./${{ matrix.app}}.AppDir
@@ -150,7 +150,7 @@ jobs:
         Terminal=true
         EOF
         if [[ "${{ matrix.app }}" == "appimagetool" ]]; then
-          PATH=./${{ matrix.app }}.AppDir/usr/bin/:$PATH ./appimagetool ./${{ matrix.app}}.AppDir
+          PATH=./${{ matrix.app }}.AppDir/usr/bin/:$PATH ./appimagetool-* ./${{ matrix.app}}.AppDir
         else
           chmod +x ./appimage-deploy.AppImage
           ./appimage-deploy.AppImage ./${{ matrix.app}}.AppDir
