@@ -40,11 +40,11 @@ Terminal=true
 EOF
 if [[ "$BUILD_APP" == "appimagetool" ]]; then
     ln -s $BUILD_APP.AppDir/usr/bin/* .
-    PATH="$BUILD_APP.AppDir/usr/bin/:$PATH" ./appimagetool-* ./${{ matrix.app}}.AppDir || true  # FIXME: remove this true
+    PATH="$BUILD_APP.AppDir/usr/bin/:$PATH" ./appimagetool-* ./$BUILD_APP.AppDir || true  # FIXME: remove this true
 else
     # use our own dog food :)
     chmod +x ./appimagetool-*-deploy*.AppImage/*.AppImage
-    ./appimagetool-*.AppImage/*.AppImage ./${{ matrix.app}}.AppDir || true
+    ./appimagetool-*.AppImage/*.AppImage ./$BUILD_APP.AppDir || true
 fi
 rm -rf ./appimagetool-*-deploy*.AppImage
 mkdir dist
