@@ -13,11 +13,16 @@ fi
 if [[ "$BUILD_ARCH" == "arm64" ]]; then
     export ARCHITECTURE="aarch64"
 fi
+if [[ "$BUILD_ARCH" == "arm" ]]; then
+    export ARCHITECTURE="armhf"
+fi
 
-if [[ "$BUILD_ARCH" == "arm64" || "$BUILD_ARCH" == "arm" ]]; then
+export QEMU_USER_STATIC=""
+if [[ "$BUILD_ARCH" == "arm64"]]; then
     export QEMU_USER_STATIC="qemu-$ARCHITECTURE -L /usr/$ARCHITECTURE-linux-gnu/"
-else
-    export QEMU_USER_STATIC=""
+fi
+if [[ "$BUILD_ARCH" == "arm"]]; then
+    export QEMU_USER_STATIC="qemu-arm -L /usr/$ARCHITECTURE-linux-gnu/"
 fi
 
 
