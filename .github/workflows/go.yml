@@ -58,7 +58,7 @@ jobs:
       run: |
         export BUILD_APP="${{ matrix.app }}"
         export BUILD_ARCH="${{ matrix.arch }}"
-        ./scripts/build-part.sh
+        ./scripts/build-appimage.sh
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v1.0.0
@@ -118,7 +118,7 @@ jobs:
       run: |
         export BUILD_APP="${{ matrix.app }}"
         export BUILD_ARCH="${{ matrix.arch }}"
-        ./scripts/build-part.sh
+        ./scripts/build-appimage.sh
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v1.0.0
