@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         app: [appimagetool]
-        arch: [amd64, 386]  # 386 == i386 or 32 bit
+        arch: ['amd64', '386']  # 386 == i386 or 32 bit
     steps:
 
     - name: Set up Go 1.x
@@ -35,7 +35,7 @@ jobs:
         sudo apt -y install linux-libc-dev
 
     - name: Install cross compile dependencies ${{ matrix.arch }}
-      if: ${{ matrix.arch }} == "386"
+      if: matrix.arch == '386'
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update
@@ -44,7 +44,7 @@ jobs:
         sudo apt-get -qq -y install gcc-multilib autoconf
         
     - name: Install cross compile dependencies (ARM) 
-      if: ${{ matrix.arch }} == "arm"
+      if: matrix.arch == 'arm'
       run: |
         sudo apt-get -qq -y install gcc-arm-linux-gnueabi autoconf
         
