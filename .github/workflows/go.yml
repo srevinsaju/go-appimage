@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         app: [appimagetool]
-        arch: ['amd64', '386', 'arm64']  # 386 == i386 or 32 bit
+        arch: ['amd64', '386', 'arm64'. 'arm']  # 386 == i386 or 32 bit
     steps:
 
     - name: Set up Go 1.x
@@ -43,27 +43,17 @@ jobs:
         sudo apt-get install -y libc6:i386 zlib1g:i386 libfuse2:i386
         sudo apt-get -qq -y install gcc-multilib autoconf
         
-        
     - name: Install cross compile dependencies (ARM) 
-      if: matrix.arch == 'arm64'
+      if: matrix.arch == 'arm64' || matrix.arch == 'arm'
+      shell: bash
       run: |
-      
-        # we are going to do something weird
-        # lets replace azure's sources.list
-        echo "deb [arch=amd64,i386] http://us.archive.ubuntu.com/ubuntu/ bionic main restricted universe multiverse" | sudo tee /etc/apt/sources.list
-        echo "deb [arch=amd64,i386] http://us.archive.ubuntu.com/ubuntu/ bionic-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=amd64,i386] http://us.archive.ubuntu.com/ubuntu/ bionic-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=amd64,i386] http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic-security main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        sudo dpkg --add-architecture armhf
-        sudo apt-get update
-        sudo apt-get install -y linux-libc-dev:armhf
-        sudo apt-get install -y libc6:armhf zlib1g:armhf zlib1g-dev:armhf libfuse2:armhf libc6-armel:armhf
-        sudo apt-get -qq -y install gcc-arm-linux-gnueabi autoconf
+        export APT_GET_ARCH=${{ matrix.arch }}
+        if [[ "${{ matrix.arch }}" == "arm" ]]; then 
+            # ubuntu uses armhf and not armv7
+            # todo FIXME
+            export APT_GET_ARCH=armhf
+        fi
+        ./scripts/get-arm-sources-ubuntu.sh
         
         
     - name: Build ${{ matrix.arch }}
@@ -92,7 +82,7 @@ jobs:
     strategy:
       matrix:
         app: [appimagetool, appimaged]
-        arch: ['amd64', '386', 'arm64']
+        arch: ['amd64', '386', 'arm64', 'arm']
     steps:
 
     - name: Set up Go 1.x
@@ -122,25 +112,16 @@ jobs:
         sudo apt-get -qq -y install gcc-multilib autoconf
         
     - name: Install cross compile dependencies (ARM) 
-      if: matrix.arch == 'arm64'
+      if: matrix.arch == 'arm64' || matrix.arch == 'arm'
+      shell: bash
       run: |
-      
-        # we are going to do something weird
-        # lets replace azure's sources.list
-        echo "deb [arch=amd64,i386] http://us.archive.ubuntu.com/ubuntu/ bionic main restricted universe multiverse" | sudo tee /etc/apt/sources.list
-        echo "deb [arch=amd64,i386] http://us.archive.ubuntu.com/ubuntu/ bionic-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=amd64,i386] http://us.archive.ubuntu.com/ubuntu/ bionic-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=amd64,i386] http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic-security main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-        sudo dpkg --add-architecture armhf
-        sudo apt-get update
-        sudo apt-get install -y linux-libc-dev:armhf
-        sudo apt-get install -y libc6:armhf zlib1g:armhf zlib1g-dev:armhf libfuse2:armhf libc6-armel:armhf
-        sudo apt-get -qq -y install gcc-arm-linux-gnueabi autoconf
+        export APT_GET_ARCH=${{ matrix.arch }}
+        if [[ "${{ matrix.arch }}" == "arm" ]]; then 
+            # ubuntu uses armhf and not armv7
+            # todo FIXME
+            export APT_GET_ARCH=armhf
+        fi
+        ./scripts/get-arm-sources-ubuntu.sh
         
         
     - name: Build ${{ matrix.arch }}
