@@ -3,11 +3,11 @@ set -eux
 
 mv "./$BUILD_APP" ./$BUILD_APP-$(go env GOHOSTARCH)
 # export the ARCHITECTURE
-export ARCHITECTURE=$BUIILD_ARCH
-if [[ "$BUIILD_ARCH" == "386" ]]; then
+export ARCHITECTURE=$BUILD_ARCH
+if [[ "$BUILD_ARCH" == "386" ]]; then
     export ARCHITECTURE="i686"
 fi
-if [[ "$BUIILD_ARCH" == "amd64" ]]; then
+if [[ "$BUILD_ARCH" == "amd64" ]]; then
     export ARCHITECTURE="x86_64"
 fi
 
