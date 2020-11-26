@@ -19,10 +19,10 @@ fi
 
 export QEMU_USER_STATIC=""
 if [[ "$BUILD_ARCH" == "arm64" ]]; then
-    export QEMU_USER_STATIC="qemu-$ARCHITECTURE -L /usr/$ARCHITECTURE-linux-gnu/"
+    export QEMU_USER_STATIC="qemu-aarch64-static -L /usr/$ARCHITECTURE-linux-gnu/ "
 fi
 if [[ "$BUILD_ARCH" == "arm" ]]; then
-    export QEMU_USER_STATIC="qemu-arm -L /usr/$ARCHITECTURE-linux-gnu/"
+    export QEMU_USER_STATIC="qemu-arm-static -L /usr/arm-linux-gnueabihf/ "
 fi
 
 
