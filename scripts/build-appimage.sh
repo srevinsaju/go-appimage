@@ -31,13 +31,15 @@ cp data/appimage.png $BUILD_APP.AppDir/
 cat > $BUILD_APP.AppDir/$BUILD_APP.desktop <<\EOF
 [Desktop Entry]
 Type=Application
-Name=$BUILD_APP
-Exec=$BUILD_APP
-Comment=$BUILD_APP - tool to generate AppImages from AppDirs
+Name=REPLACE_ME_APPNAME
+Exec=REPLACE_ME_APPNAME
+Comment=REPLACE_ME_APPNAME - tool to generate AppImages from AppDirs
 Icon=appimage
 Categories=Development;
 Terminal=true
 EOF
+sed -i "s,REPLACE_ME_APPNAME,$BUILD_APP,g" $BUILD_APP.AppDir/$BUILD_APP.desktop
+
 if [[ "$BUILD_APP" == "appimagetool" ]]; then
     ln -s $BUILD_APP.AppDir/usr/bin/* .
     PATH="$BUILD_APP.AppDir/usr/bin/:$PATH" ./appimagetool-* ./$BUILD_APP.AppDir || true  # FIXME: remove this true
