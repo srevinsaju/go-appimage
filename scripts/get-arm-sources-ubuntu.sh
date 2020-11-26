@@ -21,4 +21,4 @@ if [[ "$APT_GET_ARCH" == "arm" ]]; then
     sudo apt-get install -qq -y libc6-armel:$APT_GET_ARCH
 fi
 
-sudo apt-get -qq -y install gcc-arm-linux-gnueabi autoconf
+sudo apt-get -qq -y install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu autoconf
