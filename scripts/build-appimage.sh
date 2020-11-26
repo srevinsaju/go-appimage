@@ -10,6 +10,9 @@ fi
 if [[ "$BUILD_ARCH" == "amd64" ]]; then
     export ARCHITECTURE="x86_64"
 fi
+if [[ "$BUILD_ARCH" == "arm64" ]]; then
+    export ARCHITECTURE="aarch64"
+fi
 
 mkdir -p "$BUILD_APP.AppDir/usr/bin"
 
