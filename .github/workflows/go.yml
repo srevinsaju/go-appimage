@@ -113,7 +113,14 @@ jobs:
       run: |
         env CGO_ENABLED=1 GOOS=linux GOARCH=${{ matrix.arch }} go build -v -trimpath -ldflags="-s -w" ./src/${{ matrix.app }}
         
-    - name: Get Dependencies
+        
+    - name: Download a prebuilt appimagetool 
+      if: matrix.app != "appimagetool"
+      uses: actions/download-artifact@v1
+      with:
+        name: appimagetool-${{ matrix.arch }}-deploy.AppImage
+
+    - name: Get Dependencies and build them into an AppImage
       shell: bash
       run: |
         export BUILD_APP="${{ matrix.app }}"
