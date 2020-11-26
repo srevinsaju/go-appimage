@@ -115,7 +115,7 @@ jobs:
         
         
     - name: Download a prebuilt appimagetool 
-      if: matrix.app != "appimagetool"
+      if: matrix.app != 'appimagetool'
       uses: actions/download-artifact@v1
       with:
         name: appimagetool-${{ matrix.arch }}-deploy.AppImage
