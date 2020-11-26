@@ -9,7 +9,7 @@ on:
 jobs:
 
   build-appimagetool:
-    name: Pre-deploy tests ${{ matrix.app }}
+    name: Pre-deploy tests ${{ matrix.app }} (${{ matrix.arch }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -97,8 +97,8 @@ jobs:
           ln -s ${{ matrix.app }}.AppDir/usr/bin/* .
           PATH="${{ matrix.app }}.AppDir/usr/bin/:$PATH" ./appimagetool-* ./${{ matrix.app}}.AppDir  || true
         else
-          chmod +x ./appimage.AppImage
-          ./appimage.AppImage ./${{ matrix.app}}.AppDir || true
+          chmod +x ./appimage-*.AppImage/*.AppImage
+          ./appimage-*.AppImage/*.AppImage ./${{ matrix.app}}.AppDir || true
         fi
         rm -rf ./appimage.AppImage
         mkdir dist
@@ -112,7 +112,7 @@ jobs:
 
 
   build-others:
-    name: Build ${{ matrix.app }}
+    name: Build ${{ matrix.app }} (${{ matrix.arch }})
     needs: build-appimagetool
     runs-on: ubuntu-latest
     strategy:
@@ -203,7 +203,7 @@ jobs:
         else
           # use our own dog food :)
           chmod +x ./appimagetool-deploy.AppImage/*.AppImage
-          ./appimagetool-deploy.AppImage/*.AppImage ./${{ matrix.app}}.AppDir || true
+          ./appimagetool-*.AppImage/*.AppImage ./${{ matrix.app}}.AppDir || true
         fi
         rm -rf ./appimage.AppImage
         mkdir dist
