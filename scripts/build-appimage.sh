@@ -2,7 +2,6 @@
 set -eux
 
 mv "./$BUILD_APP" ./$BUILD_APP-$(go env GOHOSTARCH)
-echo "$LD_LIBRARY_PATH"
 
 # export the ARCHITECTURE
 export ARCHITECTURE=$BUILD_ARCH
