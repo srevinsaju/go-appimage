@@ -32,13 +32,15 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+        sudo apt -y install linux-libc-dev
 
     - name: Install cross compile dependencies ${{ matrix.arch }}
       if: ${{ matrix.arch }} == "386"
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update
-        sudo apt-get install libc6:i386 zlib1g:i386 libfuse2:i386
+        sudo apt-get install -y linux-libc-dev:i386
+        sudo apt-get install -y libc6:i386 zlib1g:i386 libfuse2:i386
         sudo apt-get -qq -y install gcc-multilib autoconf
         
     - name: Install cross compile dependencies (ARM) 
