@@ -14,6 +14,11 @@ echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/
 echo "deb [arch=arm64,armhf,ppc64el,s390x] http://ports.ubuntu.com/ubuntu-ports/ bionic-security main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
 sudo dpkg --add-architecture "$APT_GET_ARCH"
 sudo apt-get update
-sudo apt-get install -y linux-libc-dev:$APT_GET_ARCH
-sudo apt-get install -y libc6:$APT_GET_ARCH zlib1g:$APT_GET_ARCH zlib1g-dev:$APT_GET_ARCH libfuse2:$APT_GET_ARCH libc6-armel:$APT_GET_ARCH
+sudo apt-get install -qq -y linux-libc-dev:$APT_GET_ARCH
+sudo apt-get install -qq -y libc6:$APT_GET_ARCH zlib1g:$APT_GET_ARCH zlib1g-dev:$APT_GET_ARCH libfuse2:$APT_GET_ARCH 
+
+if [[ "$APT_GET_ARCH" == "arm" ]]; then
+    sudo apt-get install -qq -y libc6-armel:$APT_GET_ARCH
+fi
+
 sudo apt-get -qq -y install gcc-arm-linux-gnueabi autoconf
