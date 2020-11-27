@@ -1,0 +1,177 @@
+name: Build
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+
+  build-appimagetool:
+    name: Pre-deploy tests ${{ matrix.app }} (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [appimagetool]
+        arch: ['amd64', '386', 'arm64', 'arm']
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.13
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+        sudo apt -y install linux-libc-dev
+
+    - name: Install cross compile dependencies ${{ matrix.arch }}
+      if: matrix.arch == '386'
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install -y linux-libc-dev:i386
+        sudo apt-get install -y libc6:i386 zlib1g:i386 libfuse2:i386
+        sudo apt-get -qq -y install gcc-multilib autoconf
+        
+    - name: Install cross compile dependencies (ARM) 
+      if: matrix.arch == 'arm64' || matrix.arch == 'arm'
+      shell: bash
+      run: |
+        export APT_GET_ARCH=${{ matrix.arch }}
+        if [[ "${{ matrix.arch }}" == "arm" ]]; then 
+            # ubuntu uses armhf and not armv7
+            # todo FIXME
+            export APT_GET_ARCH=armhf
+        fi
+        ./scripts/get-arm-sources-ubuntu.sh
+        
+        
+    - name: Build ${{ matrix.arch }}
+      shell: bash
+      run: |
+        if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+            export CC="aarch64-linux-gnu-gcc"
+        fi
+        if [[ "${{ matrix.arch }}" == "arm" ]]; then
+            export CC="arm-linux-gnueabi-gcc"
+        fi
+        env CGO_ENABLED=1 GOOS=linux GOARCH=${{ matrix.arch }} go build -v -trimpath -ldflags="-s -w" ./src/${{ matrix.app }}
+        
+    - name: Get Dependencies
+      shell: bash
+      run: |
+        export BUILD_APP="${{ matrix.app }}"
+        export BUILD_ARCH="${{ matrix.arch }}"
+        ./scripts/build-appimage.sh
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: ${{ matrix.app }}-${{ matrix.arch }}-deploy.AppImage
+        path: dist
+
+
+  build-others:
+    name: Build ${{ matrix.app }} (${{ matrix.arch }})
+    needs: build-appimagetool
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [appimagetool, appimaged]
+        arch: ['amd64', '386', 'arm64', 'arm']
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.13
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+        sudo apt -y install linux-libc-dev
+
+    - name: Install cross compile dependencies ${{ matrix.arch }}
+      if: matrix.arch == '386'
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install -y linux-libc-dev:i386
+        sudo apt-get install -y libc6:i386 zlib1g:i386 libfuse2:i386
+        sudo apt-get -qq -y install gcc-multilib autoconf
+        
+    - name: Install cross compile dependencies (ARM) 
+      if: matrix.arch == 'arm64' || matrix.arch == 'arm'
+      shell: bash
+      run: |
+        export APT_GET_ARCH=${{ matrix.arch }}
+        if [[ "${{ matrix.arch }}" == "arm" ]]; then 
+            # ubuntu uses armhf and not armv7
+            # todo FIXME
+            export APT_GET_ARCH=armhf
+        fi
+        ./scripts/get-arm-sources-ubuntu.sh
+        
+        
+    - name: Build ${{ matrix.arch }}
+      shell: bash
+      run: |
+        if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+            export CC="aarch64-linux-gnu-gcc"
+        fi
+        if [[ "${{ matrix.arch }}" == "arm" ]]; then
+            export CC="arm-linux-gnueabi-gcc"
+        fi
+        env CGO_ENABLED=1 GOOS=linux GOARCH=${{ matrix.arch }} go build -v -trimpath -ldflags="-s -w" ./src/${{ matrix.app }}
+        
+        
+    - name: Download a prebuilt appimagetool 
+      if: matrix.app != 'appimagetool'
+      uses: actions/download-artifact@v1
+      with:
+        name: appimagetool-${{ matrix.arch }}-deploy.AppImage
+
+    - name: Get Dependencies and build them into an AppImage
+      shell: bash
+      run: |
+        export BUILD_APP="${{ matrix.app }}"
+        export BUILD_ARCH="${{ matrix.arch }}"
+        ./scripts/build-appimage.sh
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: ${{ matrix.app }}-continuous-${{ matrix.arch }}.AppImage
+        path: dist
+
+    - name: Pre Release ${{ matrix.arch }} ${{ matrix.app }}
+      uses: marvinpinto/action-automatic-releases@latest
+      if: github.ref == 'refs/heads/master' && startsWith(github.ref, 'refs/tags/') != true
+      with:
+        prerelease: true
+        draft: false
+        automatic_release_tag: ${{ matrix.app }}-continuous-${{ matrix.arch }}
+        title: ${{ matrix.app }} Continuous (${{ matrix.arch }}Build
+        files: |
+          ${{ matrix.app }}-continuous-${{ matrix.arch }}.AppImage
+  
+
