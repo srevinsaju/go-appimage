@@ -25,6 +25,7 @@ if [[ "$BUILD_ARCH" == "arm64" ]]; then
 fi
 if [[ "$BUILD_ARCH" == "arm" ]]; then
     export LD_LIBRARY_PATH="/lib/arm-linux-gnueabihf"
+    export QEMU_LD_PREFIX=/usr/arm-linux-gnueabihf/
     export QEMU_USER_STATIC="qemu-arm-static -L /usr/arm-linux-gnueabihf/ "
 fi
 
@@ -63,6 +64,7 @@ if [[ "$BUILD_APP" == "appimagetool" ]]; then
     PATH="$BUILD_APP.AppDir/usr/bin/:$PATH" $QEMU_USER_STATIC ./appimagetool-* ./$BUILD_APP.AppDir || true  # FIXME: remove this true
 else
     # use our own dog food :)
+    sudo ln -s /lib/arm-linux-gnueabihf/ld-linux.so.3 /lib/ld-linux.so.3
     chmod +x ./appimagetool-*-deploy*.AppImage/*.AppImage
     ./appimagetool-*.AppImage/*.AppImage ./$BUILD_APP.AppDir || true
 fi
